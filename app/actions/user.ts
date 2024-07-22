@@ -15,15 +15,15 @@ export async function signInAction(username: string, password: string) {
         return { message: "Email or password doesn't meet validation!" , status : 402 };
     }
 
-    const user = await client.user.findUnique({
+    const user = await client.user.findFirst({
         where: { username },
     });
-
     if (!user) {
         return { message: "Invalid email or password!" , status : 403 };
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+const isPasswordValid = password===user.password;
     if (!isPasswordValid) {
         return { message: "Invalid email or password!" ,   status : 403 };
     }
