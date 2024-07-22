@@ -9,6 +9,8 @@ interface InputProps {
     required?: boolean;
     placeholder?: string;
     inputLabel?: string;
+    value?: string; // Add value prop
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Add onChange prop
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,6 +22,8 @@ const Input: React.FC<InputProps> = ({
     required = false,
     placeholder = "",
     inputLabel,
+    value,
+    onChange, // Destructure onChange prop
 }) => {
     return (
         <div>
@@ -38,6 +42,8 @@ const Input: React.FC<InputProps> = ({
                     autoComplete={autoComplete}
                     className={`ps-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${className}`}
                     placeholder={placeholder}
+                    value={value} // Pass value to input
+                    onChange={onChange} // Pass onChange to input
                 />
             </div>
         </div>
