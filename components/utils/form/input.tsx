@@ -23,7 +23,7 @@ const Input: React.FC<InputProps> = ({
     placeholder = "",
     inputLabel,
     value,
-    onChange, // Destructure onChange prop
+    onChange,
 }) => {
     return (
         <div>
