@@ -14,7 +14,56 @@ datasource db {
 }
 
 model User {
+  id                  Int                  @id @default(autoincrement())
+  username            String               @unique
+  password            String
+  LendingUser         LendingUser?
+  LendUserAccount     LendUserAccount[]
+  paymentTransactions paymentTransaction[]
+}
+
+model LendingUser {
   id       Int    @id @default(autoincrement())
+  name     String @unique
+  phoneNo  String
+  address  String
+  city     String
+  state    String
+  pincode  String
   username String @unique
-  password String
+  user     User   @relation(fields: [username], references: [username])
+}
+
+model LendUserAccount {
+  id                Int                  @id @default(autoincrement())
+  principal         Float
+  interestRate      Float
+  startDate         DateTime             @default(now())
+  endDate           DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @default(now()) @updatedAt
+  username          String
+  user              User                 @relation(fields: [username], references: [username])
+  compounded        Boolean
+  noOfTimesAnnually Int
+  paidTransactions  paymentTransaction[]
+}
+
+model paymentTransaction {
+  id              Int             @id @default(autoincrement())
+  username        String
+  user            User            @relation(fields: [username], references: [username])
+  accountId       Int
+  account         LendUserAccount @relation(fields: [accountId], references: [id])
+  principal       Float
+  interest        Float
+  transactionType TransactionType
+  amount          Float
+  startDate       DateTime
+  paidDate        DateTime        @default(now())
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
 }

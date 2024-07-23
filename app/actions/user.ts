@@ -1,10 +1,9 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import client from "@/db/index"
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-const client = new PrismaClient();
 const userSchema = z.object({
     username: z.string().email(),
     password: z.string().min(6),
