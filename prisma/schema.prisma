@@ -17,7 +17,7 @@ model User {
   id                  Int                  @id @default(autoincrement())
   username            String               @unique
   password            String
-  LendingUser         LendingUser?
+  LendingUser         LendingUser[]
   LendUserAccount     LendUserAccount[]
   paymentTransactions paymentTransaction[]
 }
@@ -30,7 +30,7 @@ model LendingUser {
   city     String
   state    String
   pincode  String
-  username String @unique
+  username String
   user     User   @relation(fields: [username], references: [username])
 }
 
