@@ -1,16 +1,13 @@
+import Dashboard from "@/components/lenderManager/dashBoard";
 export default function LenderManagerLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="border-b p-3 w-full text-center h-1/3">
-        Dashboard
-      </div>
-      <div className="flex-1 p-3">
-        {children}
-      </div>
-    </div>
-  );
+    return (
+        <div className="flex flex-col h-full">
+            <Dashboard />
+            <div className="flex-1 p-3">{children}</div>
+        </div>
+    );
 }
