@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id                  Int                  @id @default(autoincrement())
+  id                  String               @id @default(cuid())
   username            String               @unique
   password            String
   LendingUser         LendingUser[]
@@ -23,7 +23,7 @@ model User {
 }
 
 model LendingUser {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(cuid())
   name     String @unique
   phoneNo  String
   address  String
@@ -32,28 +32,32 @@ model LendingUser {
   pincode  String
   username String
   user     User   @relation(fields: [username], references: [username])
+
+  LendUserAccount LendUserAccount[]
 }
 
 model LendUserAccount {
-  id                Int                  @id @default(autoincrement())
-  principal         Float
-  interestRate      Float
-  startDate         DateTime             @default(now())
-  endDate           DateTime?
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @default(now()) @updatedAt
-  username          String
-  user              User                 @relation(fields: [username], references: [username])
-  compounded        Boolean
-  noOfTimesAnnually Int
-  paidTransactions  paymentTransaction[]
+  id               String               @id @default(cuid())
+  userId           String
+  lendingUser      LendingUser          @relation(fields: [userId], references: [id])
+  principal        Float
+  interestRate     Float
+  startDate        DateTime             @default(now())
+  endDate          DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @default(now()) @updatedAt
+  username         String
+  user             User                 @relation(fields: [username], references: [username])
+  compounded       Boolean
+  forNoOfYears     Float
+  paidTransactions paymentTransaction[]
 }
 
 model paymentTransaction {
-  id              Int             @id @default(autoincrement())
+  id              String          @id @default(cuid())
   username        String
   user            User            @relation(fields: [username], references: [username])
-  accountId       Int
+  accountId       String
   account         LendUserAccount @relation(fields: [accountId], references: [id])
   principal       Float
   interest        Float
