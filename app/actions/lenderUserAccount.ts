@@ -32,7 +32,7 @@ function errLog(error: any) {
     }
     return {
         status: 400,
-        message: msg,
+        data: msg,
     };
 }
 
@@ -69,7 +69,7 @@ export async function getLendingUserAccountAction(id: string) {
         if (!lendingUserAccount) {
             return {
                 status: 404,
-                message: "User not found",
+                data: "User not found",
             };
         }
 
@@ -106,6 +106,31 @@ export async function getAllLendingUserAccountAction(id: string) {
     }
 }
 
+export async function getAllLendingUserAccountsDataByUsernameAction(
+    username: string
+) {
+    try {
+        const lendingUserAccounts = await client.lendUserAccount.findMany({
+            where: {
+                username,
+            },
+        });
+
+        if (!lendingUserAccounts) {
+            return {
+                status: 404,
+                data: "User not found",
+            };
+        }
+
+        return {
+            status: 200,
+            data: lendingUserAccounts,
+        };
+    } catch (error) {
+        return errLog(error);
+    }
+}
 export async function updateLendingUserAccountAction(
     updateAccount: updateUserAccount
 ) {

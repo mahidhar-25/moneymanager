@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
     createLendingUserAction,
+    getAllLendingUserDetails,
     getLendingUserAction,
 } from "@/app/actions/lenderManager";
 
@@ -30,21 +31,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     // Parse the URL to get query parameters
-    const url = new URL(req.url);
-    const name = url.searchParams.get("name");
-    const username = url.searchParams.get("username");
-
-    // Validate query parameters
-    if (typeof name !== "string" || typeof username !== "string") {
-        return NextResponse.json(
-            { message: "Invalid query parameters" },
-            { status: 400 }
-        );
-    }
 
     // Call the action and handle the response
+    const username = "mahidhar100008@gmail.com";
     try {
-        const result = await getLendingUserAction(name, username);
+        const result = await getAllLendingUserDetails(username);
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
         return NextResponse.json({

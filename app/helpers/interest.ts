@@ -7,7 +7,7 @@ interface SimpleInterest {
     interest: number;
 }
 
-interface CompoundingDetail {
+export interface CompoundingDetail {
     period: number;
     startDate: string;
     endDate: string;
@@ -18,8 +18,8 @@ interface CompoundingDetail {
 interface CompoundInterestResult {
     principal: number;
     interest: number;
-    startDate: string;
-    endDate: string;
+    startDate: string | Date;
+    endDate: string | Date;
     compoundingDetails?: CompoundingDetail[];
 }
 
@@ -40,7 +40,7 @@ export function calculateSimpleInterest(
 export function calculateCompoundInterest(data: {
     principal: number;
     interestRate: number;
-    startDate: string;
+    startDate: string | Date;
     endDate: string;
     compounded: boolean;
     forNoOfYears: number;
@@ -57,7 +57,6 @@ export function calculateCompoundInterest(data: {
     const start = new Date(startDate);
     const end = endDate ? new Date(endDate) : new Date();
     const dateDiff = getDateDifference(start, end);
-    console.log(dateDiff);
 
     if (!compounded) {
         const simpleInterestDetail = calculateSimpleInterest(
@@ -113,15 +112,8 @@ export function calculateCompoundInterest(data: {
         currentStartDate = nextStartDate;
     }
 
-    // Calculate interest for the remaining period if any
-    console.log(getDateDifference(currentStartDate, end));
     const remainingTimeInYears = getDateDifference(currentStartDate, end);
     if (remainingTimeInYears.completeYears > 0) {
-        console.log({
-            remainingTimeInYears,
-            end: end.toISOString(),
-            current: currentStartDate.toISOString(),
-        });
         const simpleInterest = calculateSimpleInterest(
             currentPrincipal,
             interestRate,
