@@ -1,19 +1,21 @@
 "use server";
 
 import client from "@/db/index";
+import { AccountStatus } from "@prisma/client";
 import { z } from "zod";
 
 interface LendingUserAccount {
     principal: number;
     interestRate: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate: Date;
+    endDate?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
     username?: string;
     compounded: boolean;
     forNoOfYears: number;
     userId: string;
+    accountStatus: AccountStatus;
 }
 
 type updateUserAccount = {
@@ -23,7 +25,7 @@ type updateUserAccount = {
 };
 
 function errLog(error: any) {
-    let msg = "error";
+    let msg = "failed while creating";
     if (error instanceof Error) {
         console.error("An error occurred:", error.message);
         msg = error.message;
@@ -32,7 +34,12 @@ function errLog(error: any) {
     }
     return {
         status: 400,
-        message: msg,
+        errors: [
+            {
+                path: "database",
+                message: msg,
+            },
+        ],
     };
 }
 
@@ -69,7 +76,7 @@ export async function getLendingUserAccountAction(id: string) {
         if (!lendingUserAccount) {
             return {
                 status: 404,
-                message: "User not found",
+                errors: "User not found",
             };
         }
 
@@ -106,6 +113,31 @@ export async function getAllLendingUserAccountAction(id: string) {
     }
 }
 
+export async function getAllLendingUserAccountsDataByUsernameAction(
+    username: string
+) {
+    try {
+        const lendingUserAccounts = await client.lendUserAccount.findMany({
+            where: {
+                username,
+            },
+        });
+
+        if (!lendingUserAccounts) {
+            return {
+                status: 404,
+                errors: [{ message: "User not found", path: "user" }],
+            };
+        }
+
+        return {
+            status: 200,
+            data: lendingUserAccounts,
+        };
+    } catch (error) {
+        return errLog(error);
+    }
+}
 export async function updateLendingUserAccountAction(
     updateAccount: updateUserAccount
 ) {
@@ -123,6 +155,43 @@ export async function updateLendingUserAccountAction(
         return {
             status: 200,
             data: account,
+        };
+    } catch (error) {
+        return errLog(error);
+    }
+}
+
+export async function getAllUsersAndAccounts() {
+    try {
+        const username = "mahidhar100008@gmail.com";
+        const users = await client.lendingUser.findMany({
+            where: {
+                username,
+            },
+            include: {
+                LendUserAccount: true,
+            },
+        });
+        return {
+            status: 200,
+            data: users,
+        };
+    } catch (error) {
+        return errLog(error);
+    }
+}
+
+export async function getAllUsers() {
+    try {
+        const username = "mahidhar100008@gmail.com";
+        const users = await client.lendingUser.findMany({
+            where: {
+                username,
+            },
+        });
+        return {
+            status: 200,
+            data: users,
         };
     } catch (error) {
         return errLog(error);

@@ -10,10 +10,11 @@ interface LendingUser {
     city: string;
     pincode: string;
     address: string;
+    username?: string;
 }
 
 function errLog(error: any) {
-    let msg = "error";
+    let msg = "failed while creating";
     if (error instanceof Error) {
         console.error("An error occurred:", error.message);
         msg = error.message;
@@ -22,7 +23,12 @@ function errLog(error: any) {
     }
     return {
         status: 400,
-        message: msg,
+        errors: [
+            {
+                path: "database",
+                message: msg,
+            },
+        ],
     };
 }
 export async function createLendingUserAction(lendingUser: LendingUser) {
@@ -34,10 +40,20 @@ export async function createLendingUserAction(lendingUser: LendingUser) {
         });
 
         if (alreadyUserExist) {
-            throw new Error("User already exists!");
+            return {
+                status: 400,
+                errors: [
+                    {
+                        path: "name",
+                        message: "!user already exists have it unique",
+                    },
+                ],
+            };
         }
 
-        const username = "mahidhar100008@gmail.com";
+        const username = lendingUser.username
+            ? lendingUser.username
+            : "mahidhar100008@gmail.com";
         // Create the new lending user
         const user = await client.lendingUser.create({
             data: {

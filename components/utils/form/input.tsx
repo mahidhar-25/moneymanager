@@ -6,10 +6,10 @@ interface InputProps {
     name: string;
     autoComplete: string;
     className?: string;
-    required?: boolean;
+    required: boolean;
     placeholder?: string;
     inputLabel?: string;
-    value?: string; // Add value prop
+    value?: string | number; // Add value prop
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Add onChange prop
 }
 
@@ -18,7 +18,7 @@ const Input: React.FC<InputProps> = ({
     type,
     name,
     autoComplete,
-    className = "",
+    className,
     required = false,
     placeholder = "",
     inputLabel,
@@ -31,7 +31,8 @@ const Input: React.FC<InputProps> = ({
                 htmlFor={name}
                 className="block text-sm font-medium leading-6 text-gray-900"
             >
-                {inputLabel}
+                {inputLabel}{" "}
+                {required && <span className="text-red-500 me-1">*</span>}
             </label>
             <div className="mt-2">
                 <input

@@ -51,6 +51,12 @@ model LendUserAccount {
   compounded       Boolean
   forNoOfYears     Float
   paidTransactions paymentTransaction[]
+  accountStatus    AccountStatus
+}
+
+enum AccountStatus {
+  OPEN
+  CLOSE
 }
 
 model paymentTransaction {
@@ -59,12 +65,9 @@ model paymentTransaction {
   user            User            @relation(fields: [username], references: [username])
   accountId       String
   account         LendUserAccount @relation(fields: [accountId], references: [id])
-  principal       Float
-  interest        Float
   transactionType TransactionType
   amount          Float
-  startDate       DateTime
-  paidDate        DateTime        @default(now())
+  transactionDate DateTime        @default(now())
 }
 
 enum TransactionType {

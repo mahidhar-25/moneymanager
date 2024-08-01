@@ -6,7 +6,6 @@ export default function LenderManagerLayout({
 }>) {
     return (
         <div className="flex flex-col h-full">
-            <Dashboard />
             <div className="flex-1 p-3">{children}</div>
         </div>
     );

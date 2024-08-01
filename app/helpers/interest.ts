@@ -1,3 +1,4 @@
+import { AccountStatus } from "@prisma/client";
 import { getDateDifference } from "./dateTime";
 
 interface SimpleInterest {
@@ -7,7 +8,7 @@ interface SimpleInterest {
     interest: number;
 }
 
-interface CompoundingDetail {
+export interface CompoundingDetail {
     period: number;
     startDate: string;
     endDate: string;
@@ -18,8 +19,9 @@ interface CompoundingDetail {
 interface CompoundInterestResult {
     principal: number;
     interest: number;
-    startDate: string;
-    endDate: string;
+    startDate: string | Date;
+    endDate: string | Date;
+    compounded: boolean;
     compoundingDetails?: CompoundingDetail[];
 }
 
@@ -40,10 +42,11 @@ export function calculateSimpleInterest(
 export function calculateCompoundInterest(data: {
     principal: number;
     interestRate: number;
-    startDate: string;
-    endDate: string;
+    startDate: string | Date;
+    endDate: string | Date;
     compounded: boolean;
     forNoOfYears: number;
+    accountStatus?: AccountStatus;
 }): CompoundInterestResult {
     const {
         principal,
@@ -57,8 +60,6 @@ export function calculateCompoundInterest(data: {
     const start = new Date(startDate);
     const end = endDate ? new Date(endDate) : new Date();
     const dateDiff = getDateDifference(start, end);
-    console.log(dateDiff);
-
     if (!compounded) {
         const simpleInterestDetail = calculateSimpleInterest(
             principal,
@@ -66,10 +67,12 @@ export function calculateCompoundInterest(data: {
             dateDiff.completeYears
         );
         return {
+            compounded: false,
             principal: simpleInterestDetail.principal,
             interest: simpleInterestDetail.interest,
             endDate,
             startDate,
+            compoundingDetails: [],
         };
     }
 
@@ -88,7 +91,6 @@ export function calculateCompoundInterest(data: {
             timeInterval
         );
         currentPrincipal += simpleInterest.interest;
-        totalInterest += simpleInterest.interest;
 
         const nextStartDate = new Date(currentStartDate);
         nextStartDate.setFullYear(
@@ -128,7 +130,6 @@ export function calculateCompoundInterest(data: {
             remainingTimeInYears.completeYears
         );
         currentPrincipal += simpleInterest.interest;
-        totalInterest += simpleInterest.interest;
 
         compoundingDetails.push({
             period: period++,
@@ -139,7 +140,12 @@ export function calculateCompoundInterest(data: {
         });
     }
 
+    compoundingDetails.forEach((detail) => {
+        totalInterest += detail.interest;
+    });
+
     return {
+        compounded: true,
         principal: principal,
         interest: parseFloat(totalInterest.toFixed(2)),
         startDate: start.toISOString(),

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
     createLendingUserAction,
+    getAllLendingUserAction,
     getLendingUserAction,
 } from "@/app/actions/lenderManager";
+import { getAllLendingUserDetails } from "@/app/actions/getAllUsers";
 
 export async function POST(req: NextRequest) {
     try {
